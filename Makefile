@@ -1,5 +1,5 @@
 default:
-	nim c -r src/main.nim
+	nim c -r --hints:off src/main.nim
 
 clean:
 	rm src/main
