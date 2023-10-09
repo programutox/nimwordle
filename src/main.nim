@@ -15,7 +15,8 @@ proc main() =
   let words = readFile("assets/words.txt").splitLines
   let randomWord = words.sample.toUpper.cstring
 
-  var userInput = newStringOfCap(wordLimit)
+  var userWords = newSeqOfCap[string](attempts)
+  userWords.add(newStringOfCap(wordLimit))
 
   initWindow(screenWidth, screenHeight, "Nim Wordle")
   defer: closeWindow()
@@ -28,20 +29,26 @@ proc main() =
 
     # No more problem with keyboard layouts.
     # You can also write the same letter several times by holding it.
-    let key = getCharPressed()
-    if key in letters and userInput.len != wordLimit:
-      userInput.add(key.char.toUpperAscii)
+    let charPressed = getCharPressed()
+    if charPressed in letters and userWords[^1].len != wordLimit:
+      userWords[^1].add(charPressed.char.toUpperAscii)
 
-    if isKeyPressed(KeyboardKey.Backspace) and userInput.len != 0:
-      userInput = if isKeyDown(KeyboardKey.LeftControl):
-        ""
+    let key = getKeyPressed()
+    case key:
+      of Backspace:
+        if userWords[^1].len != 0:
+          userWords[^1] = userWords[^1][0..^2]
+      of Enter, KpEnter:
+        if userWords[^1].len == wordLimit:
+          userWords.add(newStringOfCap(wordLimit))
       else:
-        userInput[0..^2]
+        discard
 
     clearBackground(RayWhite)
 
-    if userInput.len != 0:
-      drawText(userInput.cstring, 10, 10, boxSize, Black)
+    for i, word in userWords:
+      if word.len != 0:
+        drawText(word.cstring, 10, 10 + i.int32 * boxSize, boxSize, Black)
 
 # I moved game logic to a main function because defer is not supported at top-level
 when isMainModule:
