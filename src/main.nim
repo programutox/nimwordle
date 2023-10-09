@@ -7,6 +7,7 @@ const
   screenWidth = boxSize * (wordLimit - 1)
   attempts = 10
   screenHeight = boxSize * (attempts + 1)
+  letters = 'a'.int..'z'.int
 
 proc main() =
   randomize()
@@ -25,22 +26,22 @@ proc main() =
     beginDrawing()
     defer: endDrawing()
 
-    # TODO: Replace getKeyPressed() by isKeyPressed(the_key), to avoid issue with keyboard layout
-    let key = getKeyPressed()
-    case key:
-      of KeyboardKey.A..KeyboardKey.Z:
-        if userInput.len != wordLimit:
-          userInput.add(key.ord.char)
-      of KeyboardKey.Backspace:
-        if userInput.len != 0:
-          userInput = userInput[0..^2]
-      of KeyboardKey.Enter:
-        discard
+    # No more problem with keyboard layouts.
+    # You can also write the same letter several times by holding it.
+    let key = getCharPressed()
+    if key in letters and userInput.len != wordLimit:
+      userInput.add(key.char.toUpperAscii)
+
+    if isKeyPressed(KeyboardKey.Backspace) and userInput.len != 0:
+      userInput = if isKeyDown(KeyboardKey.LeftControl):
+        ""
       else:
-        discard
+        userInput[0..^2]
 
     clearBackground(RayWhite)
-    drawText(userInput.cstring, 10, 10, boxSize, Black)
+
+    if userInput.len != 0:
+      drawText(userInput.cstring, 10, 10, boxSize, Black)
 
 # I moved game logic to a main function because defer is not supported at top-level
 when isMainModule:
