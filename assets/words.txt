@@ -2,7 +2,7 @@ aaron
 abats
 abces
 abdel
-abîme
+abime
 aboli
 abord
 about
@@ -38,8 +38,8 @@ ailes
 aille
 aimee
 aimer
-aînee
-aînes
+ainee
+aines
 ainsi
 aires
 aisee
@@ -232,7 +232,7 @@ blues
 bocal
 boire
 boite
-boîte
+boite
 bombe
 bonde
 bonds
@@ -354,7 +354,6 @@ chier
 chili
 chine
 chocs
-chur
 choir
 choix
 chope
@@ -383,6 +382,7 @@ clown
 clubs
 cocon
 codes
+coeur
 cohen
 cohue
 coins
@@ -517,7 +517,7 @@ digne
 digue
 dijon
 dilue
-dîner
+diner
 dires
 disse
 dites
@@ -645,7 +645,7 @@ fades
 fagne
 fagot
 faite
-faîte
+faite
 faits
 fallu
 falot
@@ -705,7 +705,6 @@ flore
 flots
 floue
 flous
-ftus
 foire
 folie
 folle
@@ -1143,15 +1142,12 @@ mitre
 mixte
 moche
 modes
-mlle
-murs
 moine
 moins
 moise
 moisi
 moite
 monde
-mono-
 monte
 moore
 moque
@@ -1203,11 +1199,11 @@ niant
 niece
 nigel
 niger
-nîmes
+nimes
 nobel
 noble
 noces
-nuds
+noeud
 noire
 noirs
 nolis
@@ -1236,7 +1232,6 @@ ocean
 odeon
 odeur
 odile
-uvre
 offre
 oisif
 olive
@@ -1654,7 +1649,7 @@ smith
 snack
 sobre
 socle
-surs
+soeur
 sofia
 soins
 soirs
