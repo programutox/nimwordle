@@ -13,6 +13,7 @@ type Word* = object
   # For instance adding a cstring to the seq would modify all the previous elements.
   letters: seq[string] = newSeqOfCap[string](wordLimit)
   colors: seq[Color] = newSeqOfCap[Color](wordLimit)
+  rects: seq[Rectangle] = newSeqOfCap[Rectangle](wordLimit)
 
 func currentLen*(word: Word): int =
   word.letters.len
@@ -22,12 +23,21 @@ proc addLetter*(word: var Word, letter: char) =
     return
   word.letters.add($letter)
   word.colors.add(Black)
+  word.rects.add(
+    Rectangle(
+      x: ((word.letters.len - 1) * (boxSize + boxMargin)).float32, 
+      y: word.y.float32, 
+      width: boxSize.float32, 
+      height: boxSize.float32
+    )
+  )
 
 proc pop*(word: var Word) =
   if word.currentLen == 0:
     return
   word.letters = word.letters[0..^2]
   word.colors = word.colors[0..^2]
+  word.rects = word.rects[0..^2]
 
 proc updateColors*(word: var Word, referenceWord: string) =
   let wordSet = toHashSet(referenceWord).map(c => $c)
@@ -47,4 +57,5 @@ func draw*(word: Word) =
   if word.currentLen == 0:
     return
   for i, letter in word.letters:
-    drawText(letter.cstring, boxMargin * 2 + i.int32 * (boxSize + boxMargin), word.y, boxSize, word.colors[i])
+    drawRectangle(word.rects[i], word.colors[i])
+    drawText(letter.cstring, boxMargin * 2 + i.int32 * (boxSize + boxMargin), word.y, boxSize, RayWhite)
