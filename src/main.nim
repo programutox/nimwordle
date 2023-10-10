@@ -12,11 +12,12 @@ proc main() =
   randomize()
 
   let words = readFile("assets/words.txt").splitLines
-  let randomWord = words.sample.toUpper
-
   var
+    randomWord = words.sample.toUpper
     userWords = newSeqOfCap[Word](attempts)
     wordY: int32 = 10
+    wordFound = false
+
   userWords.add(Word(y: wordY))
 
   initWindow(screenWidth, screenHeight, "Nim Wordle")
@@ -39,10 +40,20 @@ proc main() =
       of Backspace:
         userWords[^1].pop()
       of Enter, KpEnter:
-        if userWords[^1].currentLen == wordLimit:
+        if wordFound:
+          wordY = 0
+          userWords = @[Word(y: wordY)]
+          randomWord = words.sample.toUpper
+          echo randomWord
+          wordFound = false
+        elif userWords[^1].currentLen == wordLimit:
           userWords[^1].updateColors(randomWord)
-          wordY += boxSize
-          userWords.add(Word(y: wordY))
+
+          if userWords[^1].isCorrect:
+            wordFound = true
+          else:
+            wordY += boxSize
+            userWords.add(Word(y: wordY))
       else:
         discard
 
@@ -50,6 +61,10 @@ proc main() =
 
     for word in userWords:
       word.draw()
+    
+    if wordFound:
+      drawRectangle(10, 400, screenWidth - 20, 100, Gray)
+      drawText("Congrats!", 15, 420, 50, RayWhite)
 
 # I moved game logic to a main function because defer is not supported at top-level
 when isMainModule:

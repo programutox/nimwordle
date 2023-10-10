@@ -1,4 +1,4 @@
-import std/[sets, sugar]
+import std/[sequtils, sets, sugar]
 import raylib
 
 const
@@ -39,6 +39,9 @@ proc updateColors*(word: var Word, referenceWord: string) =
         Yellow
       else:
         DarkGray
+
+func isCorrect*(word: Word): bool =
+  all(word.colors, c => c == Green)
 
 func draw*(word: Word) =
   if word.currentLen == 0:
