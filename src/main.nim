@@ -40,6 +40,7 @@ proc main() =
         userWords[^1].pop()
       of Enter, KpEnter:
         if userWords[^1].currentLen == wordLimit:
+          userWords[^1].updateColors(randomWord)
           wordY += boxSize
           userWords.add(Word(y: wordY))
       else:

@@ -1,3 +1,4 @@
+import std/[sets, sugar]
 import raylib
 
 const
@@ -28,8 +29,16 @@ proc pop*(word: var Word) =
   word.letters = word.letters[0..^2]
   word.colors = word.colors[0..^2]
 
-proc updateColors(word: var Word, referenceWord: string) =
-  discard
+proc updateColors*(word: var Word, referenceWord: string) =
+  let wordSet = toHashSet(referenceWord).map(c => $c)
+  for i, letter in word.letters:
+    word.colors[i] = 
+      if letter == $referenceWord[i]:
+        Green
+      elif letter in wordSet:
+        Yellow
+      else:
+        DarkGray
 
 func draw*(word: Word) =
   if word.currentLen == 0:
