@@ -61,7 +61,7 @@ proc main() =
 
     for word in userWords:
       word.draw()
-    
+
     if wordFound:
       drawRectangle(10, 400, screenWidth - 20, 100, Gray)
       drawText("Congrats!", 15, 420, 50, RayWhite)

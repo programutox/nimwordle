@@ -25,9 +25,9 @@ proc addLetter*(word: var Word, letter: char) =
   word.colors.add(Black)
   word.rects.add(
     Rectangle(
-      x: ((word.letters.len - 1) * (boxSize + boxMargin)).float32, 
-      y: word.y.float32, 
-      width: boxSize.float32, 
+      x: ((word.letters.len - 1) * (boxSize + boxMargin)).float32,
+      y: word.y.float32,
+      width: boxSize.float32,
       height: boxSize.float32
     )
   )
@@ -42,7 +42,7 @@ proc pop*(word: var Word) =
 proc updateColors*(word: var Word, referenceWord: string) =
   let wordSet = toHashSet(referenceWord).map(c => $c)
   for i, letter in word.letters:
-    word.colors[i] = 
+    word.colors[i] =
       if letter == $referenceWord[i]:
         Green
       elif letter in wordSet:
@@ -58,4 +58,5 @@ func draw*(word: Word) =
     return
   for i, letter in word.letters:
     drawRectangle(word.rects[i], word.colors[i])
-    drawText(letter.cstring, boxMargin * 2 + i.int32 * (boxSize + boxMargin), word.y, boxSize, RayWhite)
+    drawText(letter.cstring, boxMargin * 2 + i.int32 * (boxSize + boxMargin),
+        word.y, boxSize, RayWhite)
