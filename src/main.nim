@@ -12,7 +12,7 @@ proc main() =
   randomize()
 
   let words = readFile("assets/words.txt").splitLines
-  let randomWord = words.sample.toUpper.cstring
+  let randomWord = words.sample.toUpper
 
   var
     userWords = newSeqOfCap[Word](attempts)
