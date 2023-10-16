@@ -9,6 +9,9 @@ const
   screenHeight = boxMargin + boxSize * (attemptsLimit + 1)
   letters = 'a'.int..'z'.int
 
+echo screenWidth
+echo screenHeight
+
 randomize()
 let words = readFile("resources/words.txt").splitLines
 var
