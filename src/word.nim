@@ -1,9 +1,8 @@
-import std/sets
-# Cannot write
+# Can't write
 # from std/sets import toHashSet
 # otherwise you get a type mismatch error
-from std/sugar import `=>`
-from std/sequtils import all, mapIt
+import std/sets
+from std/sequtils import allIt, mapIt
 from std/strutils import join
 import raylib
 
@@ -60,7 +59,7 @@ func getString*(word: Word): string =
   word.letters.join
 
 func isCorrect*(word: Word): bool =
-  all(word.colors, c => c == Green)
+  word.colors.allIt(it == Green)
 
 func draw*(word: Word) =
   if word.currentLen == 0:
