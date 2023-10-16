@@ -5,14 +5,12 @@ import word
 
 const
   screenWidth = boxMargin + (boxSize + boxMargin) * wordLimit
-  attemptsLimit = 10
-  screenHeight = boxMargin + boxSize * (attemptsLimit + 1)
+  attemptsLimit = 6
+  screenHeight = boxMargin + (boxSize + boxMargin) * attemptsLimit
   letters = 'a'.int..'z'.int
 
-echo screenWidth
-echo screenHeight
-
 randomize()
+
 let words = readFile("resources/words.txt").splitLines
 var
   randomWord = words.sample.toUpper
@@ -23,36 +21,13 @@ var
 
 userWords.add(Word(y: wordY))
 
-proc updateDrawFrame() {.cdecl.} =
+proc drawNotification(text: cstring) =
+  drawRectangle(10, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - boxMargin * 4, 50 + boxMargin * 2, Gray)
+  drawText(text, 15, screenHeight - boxSize * 2 - boxMargin, 50, RayWhite)
+
+proc draw() =
   beginDrawing()
   defer: endDrawing()
-
-  # No more problem with keyboard layouts.
-  # You can also write the same letter several times by holding it.
-  let charPressed = getCharPressed()
-  if charPressed in letters and userWords[^1].currentLen != wordLimit:
-    userWords[^1].addLetter(charPressed.char.toUpperAscii)
-
-  let key = getKeyPressed()
-
-  if key == KeyboardKey.Backspace and not (wordFound or attempt == attemptsLimit):
-    userWords[^1].pop()
-  if key == KeyboardKey.Enter or key == KeyboardKey.KpEnter:
-    if wordFound or attempt == attemptsLimit:
-      wordY = boxMargin
-      userWords = @[Word(y: wordY)]
-      randomWord = words.sample.toUpper
-      wordFound = false
-      attempt = 0
-    elif userWords[^1].currentLen == wordLimit and userWords[^1].getString.toLower in words:
-      userWords[^1].updateColors(randomWord)
-      inc attempt
-
-      if userWords[^1].isCorrect:
-        wordFound = true
-      elif attempt != attemptsLimit:
-        wordY += boxSize + boxMargin
-        userWords.add(Word(y: wordY))
 
   clearBackground(RayWhite)
 
@@ -64,15 +39,48 @@ proc updateDrawFrame() {.cdecl.} =
     word.draw()
 
   if wordFound:
-    drawRectangle(10, 400, screenWidth - 20, 100, Gray)
-    drawText("Congrats!", 15, 420, 50, RayWhite)
+    drawNotification("Congrats!")
   elif attempt == attemptsLimit:
-    drawRectangle(10, 400, screenWidth - 20, 100, Gray)
-    drawText("You lost...", 15, 420, 50, RayWhite)
+    drawNotification("You lost...")
+
+proc updateDrawFrame() {.cdecl.} =
+  # No more problem with keyboard layouts.
+  # You can also write the same letter several times by holding it.
+  let charPressed = getCharPressed()
+  if charPressed in letters and userWords[^1].currentLen != wordLimit:
+    userWords[^1].addLetter(charPressed.char.toUpperAscii)
+
+  let key = getKeyPressed()
+
+  if key == KeyboardKey.Backspace and not (wordFound or attempt == attemptsLimit):
+    userWords[^1].pop()
+  if key != KeyboardKey.Enter and key != KeyboardKey.KpEnter:
+    draw()
+    return
+
+  if wordFound or attempt == attemptsLimit:
+    wordY = boxMargin
+    userWords = @[Word(y: wordY)]
+    randomWord = words.sample.toUpper
+    wordFound = false
+    attempt = 0
+  elif userWords[^1].currentLen == wordLimit and userWords[^1].getString.toLower in words:
+    userWords[^1].updateColors(randomWord)
+    inc attempt
+
+    if userWords[^1].isCorrect:
+      wordFound = true
+    elif attempt != attemptsLimit:
+      wordY += boxSize + boxMargin
+      userWords.add(Word(y: wordY))
+  
+  draw()
 
 proc main() =
   initWindow(screenWidth, screenHeight, "Nim Wordle")
   defer: closeWindow()
+
+  echo randomWord
 
   when defined(emscripten):
     emscriptenSetMainLoop(updateDrawFrame, 0, 1)
