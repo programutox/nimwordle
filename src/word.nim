@@ -1,9 +1,8 @@
 # Can't write
 # from std/sets import toHashSet
 # otherwise you get a type mismatch error
-import std/sets
+import std/[sets, strutils, tables]
 from std/sequtils import allIt, mapIt
-from std/strutils import join
 import raylib
 
 const
@@ -46,11 +45,13 @@ proc pop*(word: var Word) =
 
 proc updateColors*(word: var Word, referenceWord: string) =
   let wordSet = referenceWord.toHashSet.mapIt($it)
+  let userWordSet = word.letters.toHashSet
+
   for i, letter in word.letters:
     word.colors[i] =
       if letter == $referenceWord[i]:
         Green
-      elif letter in wordSet:
+      elif letter in wordSet and letter notin userWordSet:
         Yellow
       else:
         DarkGray
