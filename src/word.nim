@@ -1,4 +1,10 @@
-import std/[sequtils, sets, sugar]
+import std/sets
+# Cannot write
+# from std/sets import toHashSet
+# otherwise you get a type mismatch error
+from std/sugar import `=>`
+from std/sequtils import all, mapIt
+from std/strutils import join
 import raylib
 
 const
@@ -25,7 +31,7 @@ proc addLetter*(word: var Word, letter: char) =
   word.colors.add(Black)
   word.rects.add(
     Rectangle(
-      x: ((word.letters.len - 1) * (boxSize + boxMargin)).float32,
+      x: (boxMargin + (word.letters.len - 1) * (boxSize + boxMargin)).float32,
       y: word.y.float32,
       width: boxSize.float32,
       height: boxSize.float32
@@ -40,7 +46,7 @@ proc pop*(word: var Word) =
   word.rects = word.rects[0..^2]
 
 proc updateColors*(word: var Word, referenceWord: string) =
-  let wordSet = toHashSet(referenceWord).map(c => $c)
+  let wordSet = referenceWord.toHashSet.mapIt($it)
   for i, letter in word.letters:
     word.colors[i] =
       if letter == $referenceWord[i]:
@@ -50,6 +56,9 @@ proc updateColors*(word: var Word, referenceWord: string) =
       else:
         DarkGray
 
+func getString*(word: Word): string =
+  word.letters.join
+
 func isCorrect*(word: Word): bool =
   all(word.colors, c => c == Green)
 
@@ -58,5 +67,5 @@ func draw*(word: Word) =
     return
   for i, letter in word.letters:
     drawRectangle(word.rects[i], word.colors[i])
-    drawText(letter.cstring, boxMargin * 2 + i.int32 * (boxSize + boxMargin),
+    drawText(letter.cstring, boxMargin * 3 + i.int32 * (boxSize + boxMargin),
         word.y, boxSize, RayWhite)
