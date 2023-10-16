@@ -44,14 +44,18 @@ proc pop*(word: var Word) =
   word.rects = word.rects[0..^2]
 
 proc updateColors*(word: var Word, referenceWord: string) =
-  let wordSet = referenceWord.toHashSet.mapIt($it)
-  let userWordSet = word.letters.toHashSet
+  let 
+    wordSet = referenceWord.toHashSet.mapIt($it)
+    referenceCounter = referenceWord.toCountTable
+
+  var counter = initTable[string, int]()
 
   for i, letter in word.letters:
+    counter[letter] = counter.getOrDefault(letter) + 1
     word.colors[i] =
       if letter == $referenceWord[i]:
         Green
-      elif letter in wordSet and letter notin userWordSet:
+      elif letter in wordSet and counter[letter] <= referenceCounter[letter[0]]:
         Yellow
       else:
         DarkGray
