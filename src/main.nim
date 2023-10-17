@@ -3,11 +3,11 @@ import raylib
 import gamestate
 
 randomize()
-var state = initGameState()
+var game = initGameState()
 
 proc updateDrawFrame() {.cdecl.} =
-  state.update()
-  state.draw()
+  game.update()
+  game.draw()
 
 proc main() =
   initWindow(screenWidth, screenHeight, "Nim Wordle")
