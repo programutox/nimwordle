@@ -35,28 +35,26 @@ proc update*(self: var GameState) =
     self.userWords[^1].addLetter(charPressed.char.toUpperAscii)
 
   let key = getKeyPressed()
-
   if key == KeyboardKey.Backspace and not (self.wordFound or self.attempt == attemptsLimit):
     self.userWords[^1].pop()
   if key != KeyboardKey.Enter and key != KeyboardKey.KpEnter:
     return
 
   if self.wordFound or self.attempt == attemptsLimit:
-    # TODO: call constructor ?
-    self.wordY = boxMargin
-    self.userWords = @[Word(y: self.wordY)]
-    self.randomWord = self.words.sample.toUpper
-    self.wordFound = false
-    self.attempt = 0
-  elif self.userWords[^1].currentLen == wordLimit and self.userWords[^1].getString.toLower in self.words:
-    self.userWords[^1].updateColors(self.randomWord)
-    inc self.attempt
+    self = initGameState()
+    return
 
-    if self.userWords[^1].isCorrect:
-      self.wordFound = true
-    elif self.attempt != attemptsLimit:
-      self.wordY += boxSize + boxMargin
-      self.userWords.add(Word(y: self.wordY))
+  if not (self.userWords[^1].currentLen == wordLimit and self.userWords[^1].getString.toLower in self.words):
+    return
+
+  self.userWords[^1].updateColors(self.randomWord)
+  inc self.attempt
+
+  if self.userWords[^1].isCorrect:
+    self.wordFound = true
+  elif self.attempt != attemptsLimit:
+    self.wordY += boxSize + boxMargin
+    self.userWords.add(Word(y: self.wordY))
 
 proc drawNotification(text: cstring) =
   drawRectangle(10, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - boxMargin * 4, 50 + boxMargin * 2, Gray)
