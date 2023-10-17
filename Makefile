@@ -1,5 +1,6 @@
+# this command must be executed before release one, since emscripten needs the executable
 default:
-	nim c -r --hints:off -o:nimwordle src/main.nim
+	nim c -r --hints:off src/main.nim
 
 release:
 	mkdir web
