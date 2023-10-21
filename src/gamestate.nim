@@ -42,7 +42,7 @@ proc setNotification(self: var GameState, kind: NotificationKind) =
   self.timer = cpuTime()
   self.notification = kind
 
-proc checkWord(self: var GameState) =
+func checkWord(self: var GameState) =
   self.userWords[^1].updateColors(self.randomWord)
   inc self.attempt
 
@@ -79,12 +79,11 @@ method update*(self: var GameState) =
     self.userWords[^1].pop()
   if key in [KeyboardKey.Enter, KeyboardKey.KpEnter]:
     self.onEnter()
-  
 
 proc drawNotification(self: var GameState, text: cstring, temporary: bool = false) =
   if temporary and cpuTime() - self.timer > notificationDuration:
-      self.notification = nkNone
-      return
+    self.notification = nkNone
+    return
 
   drawRectangle(10, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - boxMargin * 4, textSize + boxMargin * 2, Gray)
   drawText(text, 15, screenHeight - boxSize * 2 - boxMargin, textSize, RayWhite)

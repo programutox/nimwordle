@@ -22,7 +22,7 @@ type Word* = object
 func currentLen*(word: Word): int =
   word.letters.len
 
-proc addLetter*(word: var Word, letter: char) =
+func addLetter*(word: var Word, letter: char) =
   if word.currentLen == wordLimit:
     return
   word.letters.add($letter)
@@ -36,14 +36,14 @@ proc addLetter*(word: var Word, letter: char) =
     )
   )
 
-proc pop*(word: var Word) =
+func pop*(word: var Word) =
   if word.currentLen == 0:
     return
   word.letters = word.letters[0..^2]
   word.colors = word.colors[0..^2]
   word.rects = word.rects[0..^2]
 
-proc updateColors*(word: var Word, referenceWord: string) =
+func updateColors*(word: var Word, referenceWord: string) =
   let 
     wordSet = referenceWord.toHashSet.mapIt($it)
     referenceCounter = referenceWord.toCountTable
