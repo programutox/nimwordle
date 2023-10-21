@@ -1,13 +1,10 @@
 import state
-import std/strformat
-from gamestate import attemptsLimit, initGameState
+from gamestate import initGameState
 import raylib
 
 const 
   instructions = [
-    (fmt"You have {attemptsLimit} attempts to").cstring,
-    "guess the word.",
-    "A green letter is in the",
+    "A green letter is in the".cstring,
     "right place.",
     "",
     "A yellow letter is in the",
@@ -15,20 +12,19 @@ const
     "place.",
     "",
     "A grey letter is not in",
-    "the word."
+    "the word.",
+    "",
+    "Press [Enter] to start"
   ]
   fontSize: int32 = 20
 
 type TutorialState = ref object of State
   textures: seq[Texture2D]
 
-func getAssetPath(file: string): string =
-    "./resources/" & file
-
 proc initTutorialState*(): TutorialState =
   result = TutorialState(textures: @[])
-  result.textures.add("green_letter.png".getAssetPath.loadTexture)
-  result.textures.add("yellow_letter.png".getAssetPath.loadTexture)
+  result.textures.add("resources/green_letter.png".loadTexture)
+  result.textures.add("resources/yellow_letter.png".loadTexture)
 
 method update*(self: var TutorialState, states: var seq[State]) =
   if isKeyPressed(Enter) or isKeyPressed(KpEnter):
@@ -36,10 +32,12 @@ method update*(self: var TutorialState, states: var seq[State]) =
 
 method draw*(self: var TutorialState) =
   var j: int32 = 0
+  let texture_height: int32 = self.textures[0].height
 
   for i, instruction in instructions:
-    if instruction == "":
-      drawTexture(self.textures[j], 5, 10 + i.int32 * (fontSize + 5), White)
+    if instruction != "":
+      drawText(instruction, 10, 10 + j * (texture_height + 5) + (i.int32 - j) * (fontSize + 5), fontSize, Black)
+    elif j < self.textures.len:
+      drawTexture(self.textures[j], 5, 10 + j * (texture_height + 5) + (i.int32 - j) * (fontSize + 5), White)
       inc j
-    else:
-      drawText(instruction, 10, 10 + (j.min(1)) * 50 + i.int32 * (fontSize + 5), fontSize, Black)
+      
