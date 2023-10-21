@@ -35,6 +35,35 @@ proc initGameState*(): GameState =
   result.userWords.add(Word(y: result.wordY))
   echo result.randomWord
 
+func isOver(self: GameState): bool =
+  self.notification in [nkWin, nkLost]
+
+proc setNotification(self: var GameState, kind: NotificationKind) =
+  self.timer = cpuTime()
+  self.notification = kind
+
+proc checkWord(self: var GameState) =
+  self.userWords[^1].updateColors(self.randomWord)
+  inc self.attempt
+
+  if self.userWords[^1].isCorrect:
+    self.notification = nkWin
+  elif self.attempt != attemptsLimit:
+    self.wordY += boxSize + boxMargin
+    self.userWords.add(Word(y: self.wordY))
+  else:
+    self.notification = nkLost
+
+proc onEnter(self: var GameState) =
+  if self.isOver():
+    self = initGameState()
+  elif self.userWords[^1].currentLen != wordLimit:
+    self.setNotification(nkNotEnoughLetters)
+  elif self.userWords[^1].getString.toLower notin self.words:
+    self.setNotification(nkInvalidWord)
+  else:
+    self.checkWord()
+
 # Here method enables to override the base one.
 # You need the same signature except for the type parameter,
 # which is the inherited one.
@@ -44,38 +73,13 @@ method update*(self: var GameState) =
   let charPressed = getCharPressed()
   if charPressed in letters and self.userWords[^1].currentLen != wordLimit:
     self.userWords[^1].addLetter(charPressed.char.toUpperAscii)
-  
-  if self.attempt == attemptsLimit:
-    self.notification = nkLost
 
   let key = getKeyPressed()
-  if key == KeyboardKey.Backspace and self.notification notin [nkWin, nkLost]:
+  if key == KeyboardKey.Backspace and not self.isOver():
     self.userWords[^1].pop()
-  if key != KeyboardKey.Enter and key != KeyboardKey.KpEnter:
-    return
-
-  if self.notification in [nkWin, nkLost]:
-    self = initGameState()
-    return
-
-  if self.userWords[^1].currentLen != wordLimit:
-    self.timer = cpuTime()
-    self.notification = nkNotEnoughLetters
-    return
-
-  if self.userWords[^1].getString.toLower notin self.words:
-    self.timer = cpuTime()
-    self.notification = nkInvalidWord
-    return
-
-  self.userWords[^1].updateColors(self.randomWord)
-  inc self.attempt
-
-  if self.userWords[^1].isCorrect:
-    self.notification = nkWin
-  elif self.attempt != attemptsLimit:
-    self.wordY += boxSize + boxMargin
-    self.userWords.add(Word(y: self.wordY))
+  if key in [KeyboardKey.Enter, KeyboardKey.KpEnter]:
+    self.onEnter()
+  
 
 proc drawNotification(self: var GameState, text: cstring, temporary: bool = false) =
   if temporary and cpuTime() - self.timer > notificationDuration:
