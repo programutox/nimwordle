@@ -39,6 +39,8 @@ func isOver(self: GameState): bool =
   self.notification in [nkWin, nkLost]
 
 proc setNotification(self: var GameState, kind: NotificationKind) =
+  if self.notification != nkNone:
+    return
   self.timer = cpuTime()
   self.notification = kind
 
