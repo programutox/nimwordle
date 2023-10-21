@@ -11,5 +11,5 @@ release:
 	nim c -r -d:emscripten src/main.nim
 
 clean:
-	rm -f nimwordle
+	rm -f src/main
 	rm -rf web
