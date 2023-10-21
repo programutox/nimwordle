@@ -7,7 +7,7 @@ import state
 
 const
   screenWidth* = boxMargin + (boxSize + boxMargin) * wordLimit
-  attemptsLimit = 6
+  attemptsLimit* = 6
   screenHeight* = boxMargin + (boxSize + boxMargin) * attemptsLimit
   letters = 'a'.int..'z'.int
   notificationDuration = 2
@@ -69,7 +69,7 @@ proc onEnter(self: var GameState) =
 # Here method enables to override the base one.
 # You need the same signature except for the type parameter,
 # which is the inherited one.
-method update*(self: var GameState) =
+method update*(self: var GameState, states: var seq[State]) =
   # No more problem with keyboard layouts.
   # You can also write the same letter several times by holding it.
   let charPressed = getCharPressed()

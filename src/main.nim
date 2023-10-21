@@ -1,17 +1,21 @@
 from std/random import randomize
 import raylib
 import state
-import gamestate
+import tutorialstate
+from gamestate import screenWidth, screenHeight
 
 # Seeds the random number generator, needs to be called (once),
 # otherwise you get the same seed over and over
 randomize()
 
+# Window has to be initialized before loading any texture, sound, etc.
+initWindow(screenWidth, screenHeight, "Nim Wordle")
+
 var states = newSeq[State]()
-states.add(initGameState())
+states.add(initTutorialState())
 
 proc updateDrawFrame() {.cdecl.} =
-  states[^1].update()
+  states[^1].update(states)
 
   beginDrawing()
   clearBackground(RayWhite)
@@ -19,7 +23,6 @@ proc updateDrawFrame() {.cdecl.} =
   endDrawing()
 
 proc main() =
-  initWindow(screenWidth, screenHeight, "Nim Wordle")
   defer: closeWindow()
 
   when defined(emscripten):
