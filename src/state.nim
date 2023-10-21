@@ -1,7 +1,10 @@
 type State* = ref object of RootObj
 
-proc update*(self: State) =
+# method keyword with {.base.} pragme enables to create a virtual method (like C++)
+# In that case it is needed for seq[State], 
+# so that the correct update and draw methods are called
+method update*(self: var State) {.base.} =
   discard
 
-proc draw*(self: State) =
+method draw*(self: var State) {.base.} =
   discard

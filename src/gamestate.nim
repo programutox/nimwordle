@@ -35,7 +35,10 @@ proc initGameState*(): GameState =
   result.userWords.add(Word(y: result.wordY))
   echo result.randomWord
 
-proc update*(self: var GameState) =
+# Here method enables to override the base one.
+# You need the same signature except for the type parameter,
+# which is the inherited one.
+method update*(self: var GameState) =
   # No more problem with keyboard layouts.
   # You can also write the same letter several times by holding it.
   let charPressed = getCharPressed()
@@ -82,12 +85,7 @@ proc drawNotification(self: var GameState, text: cstring, temporary: bool = fals
   drawRectangle(10, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - boxMargin * 4, textSize + boxMargin * 2, Gray)
   drawText(text, 15, screenHeight - boxSize * 2 - boxMargin, textSize, RayWhite)
 
-proc draw*(self: var GameState) =
-  beginDrawing()
-  defer: endDrawing()
-
-  clearBackground(RayWhite)
-
+method draw*(self: var GameState) =
   for i in 0..<wordLimit:
     for j in 0..<attemptsLimit:
       drawRectangleLines(
