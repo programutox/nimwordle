@@ -4,20 +4,21 @@ from gamestate import screenWidth, screenHeight
 import raylib
 
 const
-  buttonWidth: float32 = 100.0
-  buttonHeight: float32 = 100.0
-  buttonY = (screenHeight.float32 - buttonHeight) / 2.0
-  textButtonSize: int32 = 30
-  textButtonY = (screenHeight - textButtonSize) div 2
+  iconRadius: float32 = 32.0
+  iconY: float32 = screenHeight.float32 / 2.0
+  unitedStatesIconPosition = Vector2(x: screenWidth.float32 / 4.0, y: iconY)
+  unitedStatesIconDrawPosition = Vector2(x: unitedStatesIconPosition.x - iconRadius, y: unitedStatesIconPosition.y - iconRadius)
+  franceIconPosition = Vector2(x: screenWidth.float32 * 0.75, y: iconY)
+  franceIconDrawPosition = Vector2(x: franceIconPosition.x - iconRadius, y: franceIconPosition.y - iconRadius)
 
 type LanguageSelection = ref object of State
-  englishButton: Rectangle
-  frenchButton: Rectangle
+  unitedStatesIcon: Texture2D
+  franceIcon: Texture2D
 
 proc initLanguageSelection*(): LanguageSelection =
   LanguageSelection(
-    englishButton: Rectangle(x: 10.0, y: buttonY, width: buttonWidth, height: buttonHeight),
-    frenchButton: Rectangle(x: screenWidth - buttonWidth - 10.0, y: buttonY, width: buttonWidth, height: buttonHeight)
+    unitedStatesIcon: loadTexture("resources/united_states.png"),
+    franceIcon: loadTexture("resources/france.png")
   )
 
 method update*(self: var LanguageSelection, states: var seq[State]) =
@@ -25,14 +26,12 @@ method update*(self: var LanguageSelection, states: var seq[State]) =
     return
   
   let mousePosition = getMousePosition()
-  if checkCollisionPointRec(mousePosition, self.englishButton):
+  if checkCollisionPointCircle(mousePosition, unitedStatesIconPosition, iconRadius):
     states.add(initTutorial(English))
-  elif checkCollisionPointRec(mousePosition, self.frenchButton):
+  elif checkCollisionPointCircle(mousePosition, franceIconPosition, iconRadius):
     states.add(initTutorial(French))
 
 method draw*(self: var LanguageSelection) =
-  drawText("Choose a language", 10, 10, 25, Black)
-  drawRectangle(self.englishButton, Red)
-  drawText("EN", self.englishButton.x.int32 + 10, textButtonY, textButtonSize, White)
-  drawRectangle(self.frenchButton, Blue)
-  drawText("FR", self.frenchButton.x.int32 + 10, textButtonY, textButtonSize, White)
+  drawText("Choose a language", 20, 10, 25, Black)
+  drawTexture(self.unitedStatesIcon, unitedStatesIconDrawPosition, White)
+  drawTexture(self.franceIcon, franceIconDrawPosition, White)

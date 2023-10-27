@@ -11,11 +11,6 @@ I chose Nim for its simple syntax and its various backends' support, and used [n
 
 You can find the game [here](https://programutox.itch.io/nim-wordle).
 
-## How did you get all those words?
-
-You can find the French words file [here](https://www.freelang.com/dictionnaire/dic-francais.php),
-and the English one [there](https://github.com/dwyl/english-words).
-
 ## Setup
 
 Install naylib : `nimble install naylib`
@@ -52,3 +47,14 @@ To run the web game, go to the `web` folder and type :
 `python3 -m http.server`
 
 Then click on the shown link.
+
+## Credits
+
+### Text files
+
+You can find the French words file [here](https://www.freelang.com/dictionnaire/dic-francais.php),
+and the English one [there](https://github.com/dwyl/english-words).
+
+### Images
+
+[France](https://www.flaticon.com/free-icon/france_197560) and [United States](https://www.flaticon.com/free-icon/united-states_197484) icons are from Flaticon website.
