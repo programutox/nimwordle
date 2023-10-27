@@ -1,5 +1,5 @@
 import state
-from gamestate import initGameState
+from gamestate import initGame
 import raylib
 
 const 
@@ -18,19 +18,19 @@ const
   ]
   fontSize: int32 = 20
 
-type TutorialState = ref object of State
+type Tutorial = ref object of State
   textures: seq[Texture2D]
 
-proc initTutorialState*(): TutorialState =
-  result = TutorialState(textures: @[])
+proc initTutorial*(): Tutorial =
+  result = Tutorial(textures: @[])
   result.textures.add("resources/green_letter.png".loadTexture)
   result.textures.add("resources/yellow_letter.png".loadTexture)
 
-method update*(self: var TutorialState, states: var seq[State]) =
+method update*(self: var Tutorial, states: var seq[State]) =
   if isKeyPressed(Enter) or isKeyPressed(KpEnter):
-    states.add(initGameState())
+    states.add(initGame())
 
-method draw*(self: var TutorialState) =
+method draw*(self: var Tutorial) =
   var j: int32 = 0
   let texture_height: int32 = self.textures[0].height
 

@@ -12,7 +12,7 @@ randomize()
 initWindow(screenWidth, screenHeight, "Nim Wordle")
 
 var states = newSeq[State]()
-states.add(initTutorialState())
+states.add(initTutorial())
 
 proc updateDrawFrame() {.cdecl.} =
   states[^1].update(states)

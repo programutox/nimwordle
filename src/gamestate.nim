@@ -17,7 +17,7 @@ type
   NotificationKind = enum
     nkNone, nkNotEnoughLetters, nkInvalidWord, nkWin, nkLost
 
-  GameState* = ref object of State
+  Game* = ref object of State
     words: seq[string]
     randomWord: string
     userWords: seq[Word] = newSeqOfCap[Word](attemptsLimit)
@@ -26,25 +26,25 @@ type
     timer: float = cpuTime()
     notification: NotificationKind = nkNone
 
-proc initGameState*(): GameState =
+proc initGame*(): Game =
   let words = readFile("resources/words.txt").splitLines
-  result = GameState(
+  result = Game(
     words: words,
     randomWord: words.sample.toUpper
   )
   result.userWords.add(Word(y: result.wordY))
   echo result.randomWord
 
-func isOver(self: GameState): bool =
+func isOver(self: Game): bool =
   self.notification in [nkWin, nkLost]
 
-proc setNotification(self: var GameState, kind: NotificationKind) =
+proc setNotification(self: var Game, kind: NotificationKind) =
   if self.notification != nkNone:
     return
   self.timer = cpuTime()
   self.notification = kind
 
-func checkWord(self: var GameState) =
+func checkWord(self: var Game) =
   self.userWords[^1].updateColors(self.randomWord)
   inc self.attempt
 
@@ -56,9 +56,9 @@ func checkWord(self: var GameState) =
   else:
     self.notification = nkLost
 
-proc onEnter(self: var GameState) =
+proc onEnter(self: var Game) =
   if self.isOver():
-    self = initGameState()
+    self = initGame()
   elif self.userWords[^1].currentLen != wordLimit:
     self.setNotification(nkNotEnoughLetters)
   elif self.userWords[^1].getString.toLower notin self.words:
@@ -69,7 +69,7 @@ proc onEnter(self: var GameState) =
 # Here method enables to override the base one.
 # You need the same signature except for the type parameter,
 # which is the inherited one.
-method update*(self: var GameState, states: var seq[State]) =
+method update*(self: var Game, states: var seq[State]) =
   # No more problem with keyboard layouts.
   # You can also write the same letter several times by holding it.
   let charPressed = getCharPressed()
@@ -82,7 +82,7 @@ method update*(self: var GameState, states: var seq[State]) =
   if key in [KeyboardKey.Enter, KeyboardKey.KpEnter]:
     self.onEnter()
 
-proc drawNotification(self: var GameState, text: cstring, temporary: bool = false) =
+proc drawNotification(self: var Game, text: cstring, temporary: bool = false) =
   if temporary and cpuTime() - self.timer > notificationDuration:
     self.notification = nkNone
     return
@@ -90,7 +90,7 @@ proc drawNotification(self: var GameState, text: cstring, temporary: bool = fals
   drawRectangle(10, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - boxMargin * 4, textSize + boxMargin * 2, Gray)
   drawText(text, 15, screenHeight - boxSize * 2 - boxMargin, textSize, RayWhite)
 
-method draw*(self: var GameState) =
+method draw*(self: var Game) =
   for i in 0..<wordLimit:
     for j in 0..<attemptsLimit:
       drawRectangleLines(
