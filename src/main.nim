@@ -22,8 +22,14 @@ proc updateDrawFrame() {.cdecl.} =
   states[^1].draw()
   endDrawing()
 
+# States need to be freed before the window is closed
+# Since after window close you cannot handle texture memory
+proc closeResources() =
+  states = @[]
+  closeWindow()
+
 proc main() =
-  defer: closeWindow()
+  defer: closeResources()
 
   when defined(emscripten):
     emscriptenSetMainLoop(updateDrawFrame, 0, 1)
