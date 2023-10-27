@@ -46,7 +46,7 @@ proc initTutorial*(language: Language): Tutorial =
 
 method update*(self: var Tutorial, states: var seq[State]) =
   if isMouseButtonPressed(MouseButton.Left):
-    states.add(initGame())
+    states.add(initGame(self.language))
 
 method draw*(self: var Tutorial) =
   var j: int32 = 0

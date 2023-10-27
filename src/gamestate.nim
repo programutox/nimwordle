@@ -1,6 +1,6 @@
 from std/random import sample
 from std/times import cpuTime
-import std/strutils
+import std/[strutils, tables]
 import raylib
 import word
 import state
@@ -17,6 +17,27 @@ type
   NotificationKind = enum
     nkNone, nkNotEnoughLetters, nkInvalidWord, nkWin, nkLost
 
+const 
+  englishNotificationTexts = {
+      nkNotEnoughLetters: "Five letters".cstring,
+      nkInvalidWord: "Invalid word",
+      nkWin: "Congrats!",
+      nkLost: "You lost..."
+  }.toTable
+
+  frenchNotificationTexts = {
+      nkNotEnoughLetters: "Cinq lettres".cstring,
+      nkInvalidWord: "Mot invalide",
+      nkWin: "Bravo!",
+      nkLost: "Perdu..."
+  }.toTable
+
+  notificationTexts = {
+    Language.English: englishNotificationTexts,
+    Language.French: frenchNotificationTexts,
+  }.toTable
+
+type
   Game* = ref object of State
     words: seq[string]
     randomWord: string
@@ -26,11 +47,17 @@ type
     timer: float = cpuTime()
     notification: NotificationKind = nkNone
 
-proc initGame*(): Game =
-  let words = readFile("resources/words.txt").splitLines
+proc initGame*(language: Language): Game =
+  let filePath =
+    if language == English:
+      "resources/words_en.txt"
+    else:
+      "resources/words.txt"
+  let words = readFile(filePath).splitLines
   result = Game(
     words: words,
-    randomWord: words.sample.toUpper
+    randomWord: words.sample.toUpper,
+    language: language
   )
   result.userWords.add(Word(y: result.wordY))
   echo result.randomWord
@@ -58,7 +85,7 @@ func checkWord(self: var Game) =
 
 proc onEnter(self: var Game) =
   if self.isOver():
-    self = initGame()
+    self = initGame(self.language)
   elif self.userWords[^1].currentLen != wordLimit:
     self.setNotification(nkNotEnoughLetters)
   elif self.userWords[^1].getString.toLower notin self.words:
@@ -103,13 +130,9 @@ method draw*(self: var Game) =
     word.draw()
 
   case self.notification:
-    of nkWin:
-      self.drawNotification("Congrats!")
-    of nkLost:
-      self.drawNotification("You lost...")
-    of nkNotEnoughLetters:
-      self.drawNotification("Five letters", true)
-    of nkInvalidWord:
-      self.drawNotification("Invalid word", true)
-    else:
+    of nkNone:
       discard
+    of [nkWin, nkLost]:
+      self.drawNotification(notificationTexts[self.language][self.notification])
+    else:
+      self.drawNotification(notificationTexts[self.language][self.notification], true)
