@@ -1,7 +1,6 @@
 from std/random import randomize
 import raylib
 import state
-# import tutorialstate
 import languageselectionstate
 from gamestate import screenWidth, screenHeight
 
