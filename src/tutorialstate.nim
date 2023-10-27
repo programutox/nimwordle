@@ -3,7 +3,7 @@ from gamestate import initGame
 import raylib
 
 const 
-  instructions = [
+  englishInstructions = [
     "A green letter is in the".cstring,
     "right place.",
     "",
@@ -21,8 +21,8 @@ const
 type Tutorial = ref object of State
   textures: seq[Texture2D]
 
-proc initTutorial*(): Tutorial =
-  result = Tutorial(textures: @[])
+proc initTutorial*(language: Language): Tutorial =
+  result = Tutorial(textures: @[], language: language)
   result.textures.add("resources/green_letter.png".loadTexture)
   result.textures.add("resources/yellow_letter.png".loadTexture)
 
@@ -34,7 +34,7 @@ method draw*(self: var Tutorial) =
   var j: int32 = 0
   let texture_height: int32 = self.textures[0].height
 
-  for i, instruction in instructions:
+  for i, instruction in englishInstructions:
     if instruction != "":
       drawText(instruction, 10, 10 + j * (texture_height + 5) + (i.int32 - j) * (fontSize + 5), fontSize, Black)
     elif j < self.textures.len:

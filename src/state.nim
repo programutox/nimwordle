@@ -1,4 +1,7 @@
-type State* = ref object of RootObj
+type
+  Language* = enum English, French 
+  State* = ref object of RootObj
+    language*: Language = English
 
 # method keyword with {.base.} pragma enables to create a virtual method (like C++)
 # In that case it is needed for seq[State], 

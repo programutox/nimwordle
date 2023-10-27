@@ -1,7 +1,8 @@
 from std/random import randomize
 import raylib
 import state
-import tutorialstate
+# import tutorialstate
+import languageselectionstate
 from gamestate import screenWidth, screenHeight
 
 # Seeds the random number generator, needs to be called (once),
@@ -12,7 +13,7 @@ randomize()
 initWindow(screenWidth, screenHeight, "Nim Wordle")
 
 var states = newSeq[State]()
-states.add(initTutorial())
+states.add(initLanguageSelection())
 
 proc updateDrawFrame() {.cdecl.} =
   states[^1].update(states)
