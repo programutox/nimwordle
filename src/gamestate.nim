@@ -1,5 +1,4 @@
 from std/random import sample
-from std/times import cpuTime
 import std/[strutils, tables]
 import raylib
 import word
@@ -44,7 +43,7 @@ type
     userWords: seq[Word] = newSeqOfCap[Word](attemptsLimit)
     wordY: int32 = boxMargin
     attempt: int = 0
-    timer: float = cpuTime()
+    timer: float = 0.0
     notification: NotificationKind = nkNone
 
 proc initGame*(language: Language): Game =
@@ -59,6 +58,7 @@ proc initGame*(language: Language): Game =
     randomWord: words.sample.toUpper,
     language: language
   )
+  result.timer = getTime()
   result.userWords.add(Word(y: result.wordY))
   echo result.randomWord
 
@@ -68,7 +68,7 @@ func isOver(self: Game): bool =
 proc setNotification(self: var Game, kind: NotificationKind) =
   if self.notification != nkNone:
     return
-  self.timer = cpuTime()
+  self.timer = getTime()
   self.notification = kind
 
 func checkWord(self: var Game) =
@@ -110,7 +110,7 @@ method update*(self: var Game, states: var seq[State]) =
     self.onEnter()
 
 proc drawNotification(self: var Game, text: cstring, temporary: bool = false) =
-  if temporary and cpuTime() - self.timer > notificationDuration:
+  if temporary and getTime() - self.timer > notificationDuration:
     self.notification = nkNone
     return
 
