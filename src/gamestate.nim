@@ -14,7 +14,7 @@ const
 
 type 
   NotificationKind = enum
-    nkNone, nkNotEnoughLetters, nkInvalidWord, nkWin, nkLost, nkWordAlreadyWritten
+    nkNone, nkNotEnoughLetters, nkInvalidWord, nkWin, nkLost, nkWordPriorlyWritten
 
 const 
   englishNotificationTexts = {
@@ -22,7 +22,7 @@ const
       nkInvalidWord: "Invalid word",
       nkWin: "Congrats!",
       nkLost: "You lost...",
-      nkWordAlreadyWritten: "Already written"
+      nkWordPriorlyWritten: "Prior scribed"
   }.toTable
 
   frenchNotificationTexts = {
@@ -30,7 +30,7 @@ const
       nkInvalidWord: "Mot invalide",
       nkWin: "Bravo!",
       nkLost: "Perdu...",
-      nkWordAlreadyWritten: "Déjà écrit"
+      nkWordPriorlyWritten: "Déjà écrit"
   }.toTable
 
   notificationTexts = {
@@ -97,7 +97,7 @@ proc onEnter(self: var Game) =
   elif self.userWords[^1].getString.toLower notin self.words:
     self.setNotification(nkInvalidWord)
   elif self.userWords[^1].getString in self.writtenWords:
-    self.setNotification(nkWordAlreadyWritten)
+    self.setNotification(nkWordPriorlyWritten)
   else:
     self.checkWord()
 
@@ -122,8 +122,8 @@ proc drawNotification(self: var Game, text: cstring, temporary: bool = false) =
     self.notification = nkNone
     return
 
-  drawRectangle(10, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - boxMargin * 4, textSize + boxMargin * 2, Gray)
-  drawText(text, 15, screenHeight - boxSize * 2 - boxMargin, textSize, RayWhite)
+  drawRectangle(2, screenHeight - boxSize * 2 - boxMargin * 2, screenWidth - 4, textSize + boxMargin * 2, Gray)
+  drawText(text, 5, screenHeight - boxSize * 2 - boxMargin, textSize, RayWhite)
 
 method draw*(self: var Game) =
   for i in 0..<wordLimit:
