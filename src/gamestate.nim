@@ -14,21 +14,23 @@ const
 
 type 
   NotificationKind = enum
-    nkNone, nkNotEnoughLetters, nkInvalidWord, nkWin, nkLost
+    nkNone, nkNotEnoughLetters, nkInvalidWord, nkWin, nkLost, nkWordAlreadyWritten
 
 const 
   englishNotificationTexts = {
       nkNotEnoughLetters: "Five letters".cstring,
       nkInvalidWord: "Invalid word",
       nkWin: "Congrats!",
-      nkLost: "You lost..."
+      nkLost: "You lost...",
+      nkWordAlreadyWritten: "Already written"
   }.toTable
 
   frenchNotificationTexts = {
       nkNotEnoughLetters: "Cinq lettres".cstring,
       nkInvalidWord: "Mot invalide",
       nkWin: "Bravo!",
-      nkLost: "Perdu..."
+      nkLost: "Perdu...",
+      nkWordAlreadyWritten: "Déjà écrit"
   }.toTable
 
   notificationTexts = {
@@ -45,6 +47,7 @@ type
     attempt: int = 0
     timer: float = 0.0
     notification: NotificationKind = nkNone
+    writtenWords: seq[string] = newSeqOfCap[string](attemptsLimit)
 
 proc initGame*(language: Language): Game =
   let filePath =
@@ -52,12 +55,14 @@ proc initGame*(language: Language): Game =
       "resources/words_en.txt"
     else:
       "resources/words.txt"
+
   let words = readFile(filePath).splitLines
   result = Game(
     words: words,
     randomWord: words.sample.toUpper,
     language: language
   )
+
   result.timer = getTime()
   result.userWords.add(Word(y: result.wordY))
   echo result.randomWord
@@ -79,6 +84,7 @@ func checkWord(self: var Game) =
     self.notification = nkWin
   elif self.attempt != attemptsLimit:
     self.wordY += boxSize + boxMargin
+    self.writtenWords.add(self.userWords[^1].getString)
     self.userWords.add(Word(y: self.wordY))
   else:
     self.notification = nkLost
@@ -90,10 +96,12 @@ proc onEnter(self: var Game) =
     self.setNotification(nkNotEnoughLetters)
   elif self.userWords[^1].getString.toLower notin self.words:
     self.setNotification(nkInvalidWord)
+  elif self.userWords[^1].getString in self.writtenWords:
+    self.setNotification(nkWordAlreadyWritten)
   else:
     self.checkWord()
 
-# Here method enables to override the base one.
+# Here `method` enables to override the base one.
 # You need the same signature except for the type parameter,
 # which is the inherited one.
 method update*(self: var Game, states: var seq[State]) =
