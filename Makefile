@@ -1,5 +1,5 @@
 default:
-	nim c -r --hints:off src/main.nim
+	nim r --hints:off src/main.nim
 
 check:
 	nim check --hints:off src/main.nim
@@ -7,7 +7,7 @@ check:
 release:
 	mkdir web
 	cp index.html web/index.html
-	nim c -r --hints:off src/main.nim
+	nim c --hints:off src/main.nim
 	nim c -d:emscripten -d:release src/main.nim
 
 clean:
